@@ -1,0 +1,184 @@
+* Introduction
+This is my first attempt of https://overthewire.org/wargames/bandit/bandit0.html
+* Level 0
+** Level Goal
+The goal of this level is for you to log into the game using SSH. The host to which you need to connect is bandit.labs.overthewire.org, on port 2220. The username is bandit0 and the password is bandit0. Once logged in, go to the Level 1 page to find out how to beat Level 1.
+** Solution
+Hi, in this writeup I'll be discussing how I solved bandit level 0.
+
+First of all, to use ssh, I read the man page, and learnt about -p and -l tags for specifying port and username respectively.
+To connect to the server, I used the command
+#+begin_src bash
+  ssh -p 2220 -l bandit0 bandit.labs.overthewire.org
+#+end_src
+
+With this, I was able to successfully able to connect to the server. I used *ls*, to see the README file, and used *cat* to read the password, and go to the next room
+PASSWORD:
+NH2SXQwcBdpmTEzi3bvBHMM9H66vVXjL
+
+* Level 1
+** Level Goal
+The password for the next level is stored in a file called - located in the home directory
+** Solution
+In this level, the tricky part was to cat the file named "-". However I completely skipped using cat. I simply used vi to open the file, by using ":e \-" command in vi, and moved on to the next level.
+If I were to use cat, I would have used
+#+begin_src
+$ cat ./-
+#+end_src
+PASSWORD
+rRGizSaX8Mk1RTb1CNQoXTcYZWU6lgzi
+
+* Level 2
+** Level Goal
+The password for the next level is stored in a file called spaces in this filename located in the home directory
+** Solution
+The problem was not tricky at all, just relied on basic bash syntax, and is self evident. You could also use tab completion to have it automatically come up, which I did.
+#+begin_src bash
+  $ cat spaces\ in\ this\ filename
+aBZ0W5EmUfAf7kHTQeOwd8bauFJ2lAiG
+#+end_src
+* Level 3
+** Level Goal
+The password for the next level is stored in a hidden file in the inhere directory.
+** Solution
+We can use the ls with -a option, which prints all files, including hidden ones.
+#+begin_src bash
+  $ ls -a inhere
+  .  ..  .hidden
+  $ cat inhere/.hidden
+  2EW7BBsr6aMMoJ2HjW067dm8EgX26xNe
+#+end_src
+
+* Level 4
+** Level Goal
+The password for the next level is stored in the only human-readable file in the inhere directory. Tip: if your terminal is messed up, try the “reset” command.
+** Solution
+This was the first problem where I faced some difficulty. I was given a bunch of files, and I had no idea what to do. I started using cat on some initial files, to figure out what they were.
+I was given some nonsensical output, which made me realize they were probably binary files. I then read the question to see what commands I would need. I saw the *file* command, upon which reading the man page of, realized that it was perfect for my use case.
+
+#+begin_src bash
+  bandit4@bandit:~/inhere$ file ./*
+  ./-file00: data
+  ./-file01: data
+  ./-file02: data
+  ./-file03: data
+  ./-file04: data
+  ./-file05: data
+  ./-file06: data
+  ./-file07: ASCII text
+  ./-file08: data
+  ./-file09: data
+ #+end_src
+With this, I was able to figure out that -file07 contained the password.
+#+begin_src bash
+  bandit4@bandit:~/indhere$ cat ./-file07
+  lrIWWI6bB37kxfiCQZqUdOIYfr6eEeqR
+#+end_src
+
+* Level 5
+** Level Goal
+The password for the next level is stored in a file somewhere under the inhere directory and has all of the following properties:
+
+-  human-readable
+-  1033 bytes in size
+-  not executable
+** Solution
+I was stuck for a long time on this one, so I unfortunately had to read the walkthrough of this one
+#+begin_src bash
+  $ cd inhere
+  $ find ./ -size 1033c
+  ./maybehere07/.file2
+  $ cat ./maybehere07/.file2
+P4L4vucdmLnm8I7Vl7jG1ApGSfjYKqJU
+#+end_src
+* Level 6
+** Level Goal
+The password for the next level is stored somewhere on the server and has all of the following properties:
+- owned by user bandit7
+- owned by group bandit6
+- 33 bytes in size
+
+** Solution
+The best suited command for this ctf was find. I used autocomplete to get the list of all predicates available to me, and found the -user and -group predicates, which were extremely useful:
+#+begin_src bash
+  $ cd /
+  $ find ./* -user bandit7 -group bandit6 -size 33c
+  ./var/lib/dpkg/info/bandit7.password
+  $ cat ./var/lib/dpkg/info/bandit7.password
+  z7WtoNQU2XfjmMtWA8u5rN4vzqu4v99S
+#+end_src
+
+However, I was getting a lot of permission denied errors, which I couldn't resolve.
+* Level 7
+** Level Goal
+The password for the next level is stored in the file data.txt next to the word millionth
+** Solution
+In this question, we can use grep to find the line where millionth is present:
+#+begin_src bash
+  $ cat data.txt | grep millionth
+millionth	TESKZC0XvTetK0S9xNwm25STk5iWrBvP
+#+end_src
+
+* Level 8
+** Level Goal
+The password for the next level is stored in the file data.txt and is the only line of text that occurs only once
+** Level Solution
+I read up on some man pages, and figured that uniq was the man for the job. However, I had some difficulty figuring out on how to use it. I then searched [[https://www.geeksforgeeks.org/uniq-command-in-linux-with-examples/][online]] and figured out that uniq needs sorted lines.
+#+begin_src bash
+    $ sort data.txt | uniq --uniq
+    EN632PlfYiZbn3PhVK3XOGSlNInNE00t
+#+end_src
+
+* Level 9
+** Level Goal
+The password for the next level is stored in the file data.txt in one of the few human-readable strings, preceded by several ‘=’ characters.
+** Solution
+I read the man page of strings, and figured it was perfect for this question.
+#+begin_src
+$ strings data.txt | grep =
+=2""L(
+x]T========== theG)"
+========== passwordk^
+Y=xW
+t%=q
+========== is
+4=}D3
+{1\=
+FC&=z
+=Y!m
+	$/2`)=Y
+4_Q=\
+MO=(
+?=|J
+WX=DA
+{TbJ;=l
+[=lI
+========== G7w8LIi6J3kTb8A7j9LgrywtEUlyyp6s
+>8=6
+=r=_
+=uea
+zl=4
+#+end_src
+
+strings filters out human readable text for us, so it was necessary to use in this problem.
+The solution is G7w8LIi6J3kTb8A7j9LgrywtEUlyyp6s, because that looked the most passwordy.
+* Level 10
+** Level Goal
+The password for the next level is stored in the file data.txt, which contains base64 encoded data
+** Solution
+We can use base64 to decode data.txt
+#+begin_src bash
+  $ base64 --decode data.txt
+The password is 6zPeziLdR2RKNdNYFNb6nVCKzphlXHBM
+#+end_src
+* Level 11
+** Level Goal
+The password for the next level is stored in the file data.txt, where all lowercase (a-z) and uppercase (A-Z) letters have been rotated by 13 positions
+** Solution
+In this I was stuck for a while, mainly because I couldn't figure out how to make tr work. I few google searches later I came up with this:
+#+begin_src bash
+  $ cat data.txt | tr 'a-zA-Z' 'n-za-mN-ZA-M'
+The password is JVNBBFSmZwKKOP0XbFXOoW8chDz5yVRv
+#+end_src
+
+What tr does is it translates characters found in array1 to array2. Therefore it is extremely useful to decrypt substitution ciphers.
