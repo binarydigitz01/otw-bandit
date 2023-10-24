@@ -35,7 +35,7 @@ The password for the next level is stored in a file called spaces in this filena
 The problem was not tricky at all, just relied on basic bash syntax, and is self evident. You could also use tab completion to have it automatically come up, which I did.
 #+begin_src bash
   $ cat spaces\ in\ this\ filename
-aBZ0W5EmUfAf7kHTQeOwd8bauFJ2lAiG
+  aBZ0W5EmUfAf7kHTQeOwd8bauFJ2lAiG
 #+end_src
 * Level 3
 ** Level Goal
@@ -68,7 +68,7 @@ I was given some nonsensical output, which made me realize they were probably bi
   ./-file07: ASCII text
   ./-file08: data
   ./-file09: data
- #+end_src
+#+end_src
 With this, I was able to figure out that -file07 contained the password.
 #+begin_src bash
   bandit4@bandit:~/indhere$ cat ./-file07
@@ -89,7 +89,7 @@ I was stuck for a long time on this one, so I unfortunately had to read the walk
   $ find ./ -size 1033c
   ./maybehere07/.file2
   $ cat ./maybehere07/.file2
-P4L4vucdmLnm8I7Vl7jG1ApGSfjYKqJU
+  P4L4vucdmLnm8I7Vl7jG1ApGSfjYKqJU
 #+end_src
 * Level 6
 ** Level Goal
@@ -116,7 +116,7 @@ The password for the next level is stored in the file data.txt next to the word 
 In this question, we can use grep to find the line where millionth is present:
 #+begin_src bash
   $ cat data.txt | grep millionth
-millionth	TESKZC0XvTetK0S9xNwm25STk5iWrBvP
+  millionth	TESKZC0XvTetK0S9xNwm25STk5iWrBvP
 #+end_src
 
 * Level 8
@@ -125,8 +125,8 @@ The password for the next level is stored in the file data.txt and is the only l
 ** Level Solution
 I read up on some man pages, and figured that uniq was the man for the job. However, I had some difficulty figuring out on how to use it. I then searched [[https://www.geeksforgeeks.org/uniq-command-in-linux-with-examples/][online]] and figured out that uniq needs sorted lines.
 #+begin_src bash
-    $ sort data.txt | uniq --uniq
-    EN632PlfYiZbn3PhVK3XOGSlNInNE00t
+  $ sort data.txt | uniq --uniq
+  EN632PlfYiZbn3PhVK3XOGSlNInNE00t
 #+end_src
 
 * Level 9
@@ -169,7 +169,7 @@ The password for the next level is stored in the file data.txt, which contains b
 We can use base64 to decode data.txt
 #+begin_src bash
   $ base64 --decode data.txt
-The password is 6zPeziLdR2RKNdNYFNb6nVCKzphlXHBM
+  The password is 6zPeziLdR2RKNdNYFNb6nVCKzphlXHBM
 #+end_src
 * Level 11
 ** Level Goal
@@ -178,7 +178,256 @@ The password for the next level is stored in the file data.txt, where all lowerc
 In this I was stuck for a while, mainly because I couldn't figure out how to make tr work. I few google searches later I came up with this:
 #+begin_src bash
   $ cat data.txt | tr 'a-zA-Z' 'n-za-mN-ZA-M'
-The password is JVNBBFSmZwKKOP0XbFXOoW8chDz5yVRv
+  The password is JVNBBFSmZwKKOP0XbFXOoW8chDz5yVRv
 #+end_src
 
 What tr does is it translates characters found in array1 to array2. Therefore it is extremely useful to decrypt substitution ciphers.
+
+* Level 12
+** Level Goal
+The password for the next level is stored in the file data.txt, which is a hexdump of a file that has been repeatedly compressed.
+** Level Solution
+Initially, we were given a hexdump data.txt, which I copied to /tmp/bin, and worked upon.
+#+begin_src bash
+  $ xxd -r data.txt > data2.txt
+
+#+end_src
+Then I used file command to get the type of compression, and then used the corresponding decompression algorithm. I repeated this loop for around 8 times, to get the final password.
+
+PASSWORD:
+wbWdlBxEir4CaE8LaPhauuOo6pwRmrDw
+* Level 13
+** Level Goal
+The password for the next level is stored in /etc/bandit\under{}pass/bandit14 and can only be read by user bandit14. For this level, you don’t get the next password, but you get a private SSH key that can be used to log into the next level. Note: localhost is a hostname that refers to the machine you are working on.
+** Level Solution
+#+begin_src bash
+  $ cat sshkey.private
+  -----BEGIN RSA PRIVATE KEY-----
+  MIIEpAIBAAKCAQEAxkkOE83W2cOT7IWhFc9aPaaQmQDdgzuXCv+ppZHa++buSkN+
+  gg0tcr7Fw8NLGa5+Uzec2rEg0WmeevB13AIoYp0MZyETq46t+jk9puNwZwIt9XgB
+  ZufGtZEwWbFWw/vVLNwOXBe4UWStGRWzgPpEeSv5Tb1VjLZIBdGphTIK22Amz6Zb
+  ThMsiMnyJafEwJ/T8PQO3myS91vUHEuoOMAzoUID4kN0MEZ3+XahyK0HJVq68KsV
+  ObefXG1vvA3GAJ29kxJaqvRfgYnqZryWN7w3CHjNU4c/2Jkp+n8L0SnxaNA+WYA7
+  jiPyTF0is8uzMlYQ4l1Lzh/8/MpvhCQF8r22dwIDAQABAoIBAQC6dWBjhyEOzjeA
+  J3j/RWmap9M5zfJ/wb2bfidNpwbB8rsJ4sZIDZQ7XuIh4LfygoAQSS+bBw3RXvzE
+  pvJt3SmU8hIDuLsCjL1VnBY5pY7Bju8g8aR/3FyjyNAqx/TLfzlLYfOu7i9Jet67
+  xAh0tONG/u8FB5I3LAI2Vp6OviwvdWeC4nOxCthldpuPKNLA8rmMMVRTKQ+7T2VS
+  nXmwYckKUcUgzoVSpiNZaS0zUDypdpy2+tRH3MQa5kqN1YKjvF8RC47woOYCktsD
+  o3FFpGNFec9Taa3Msy+DfQQhHKZFKIL3bJDONtmrVvtYK40/yeU4aZ/HA2DQzwhe
+  ol1AfiEhAoGBAOnVjosBkm7sblK+n4IEwPxs8sOmhPnTDUy5WGrpSCrXOmsVIBUf
+  laL3ZGLx3xCIwtCnEucB9DvN2HZkupc/h6hTKUYLqXuyLD8njTrbRhLgbC9QrKrS
+  M1F2fSTxVqPtZDlDMwjNR04xHA/fKh8bXXyTMqOHNJTHHNhbh3McdURjAoGBANkU
+  1hqfnw7+aXncJ9bjysr1ZWbqOE5Nd8AFgfwaKuGTTVX2NsUQnCMWdOp+wFak40JH
+  PKWkJNdBG+ex0H9JNQsTK3X5PBMAS8AfX0GrKeuwKWA6erytVTqjOfLYcdp5+z9s
+  8DtVCxDuVsM+i4X8UqIGOlvGbtKEVokHPFXP1q/dAoGAcHg5YX7WEehCgCYTzpO+
+  xysX8ScM2qS6xuZ3MqUWAxUWkh7NGZvhe0sGy9iOdANzwKw7mUUFViaCMR/t54W1
+  GC83sOs3D7n5Mj8x3NdO8xFit7dT9a245TvaoYQ7KgmqpSg/ScKCw4c3eiLava+J
+  3btnJeSIU+8ZXq9XjPRpKwUCgYA7z6LiOQKxNeXH3qHXcnHok855maUj5fJNpPbY
+  iDkyZ8ySF8GlcFsky8Yw6fWCqfG3zDrohJ5l9JmEsBh7SadkwsZhvecQcS9t4vby
+  9/8X4jS0P8ibfcKS4nBP+dT81kkkg5Z5MohXBORA7VWx+ACohcDEkprsQ+w32xeD
+  qT1EvQKBgQDKm8ws2ByvSUVs9GjTilCajFqLJ0eVYzRPaY6f++Gv/UVfAPV4c+S0
+  kAWpXbv5tbkkzbS0eaLPTKgLzavXtQoTtKwrjpolHKIHUz6Wu+n4abfAIRFubOdN
+  /+aLoRQ0yBDRbdXMsZN/jvY44eM+xRLdRVyMmdPtP8belRi2E2aEzA==
+  -----END RSA PRIVATE KEY-----
+#+end_src
+
+I then saved the above private key in my tmp directory as sshkey.private. I then tried to run the command:
+#+begin_src bash
+  $ ssh -p 2220 -l bandit14 -i /tmp/aloha/sshkey.private bandit.labs.overthewire.org
+#+end_src
+
+But then I got the error about the private key being too open, so I had to fix my ssh key:
+#+begin_src bash
+  $ chmod 400 /tmp/aloha/sshkey.private
+  $ ssh -p 2220 -l bandit14 -i /tmp/aloha/sshkey.private bandit.labs.overthewire.org
+#+end_src
+
+And I was able to login in to the next level.
+
+* Level 14
+** Level Goal
+The password for the next level can be retrieved by submitting the password of the current level to port 30000 on localhost.
+** Level Solution
+First of all, we need to find the password for the current level, which is stored in /etc/bandit\under{}pass/bandit14 (Given in previous level).
+#+begin_src bash
+  $ cat /etc/bandit_pass/bandit14
+  fGrHPx402xGC7U7rXKDaxiWFTOiF0ENq
+#+end_src
+
+Then we connect to localhost:30000 to submit the password. I randomly tried nc first, and it worked:
+#+begin_src bash
+  $ nc localhost 30000
+  fGrHPx402xGC7U7rXKDaxiWFTOiF0ENq
+  Correct!
+  jN2kgmIXJ6fShzhT2avhotn4Zcka6tnt
+#+end_src
+
+Congrats! We got the password for the next level!
+* Level 15
+** Level Goal
+The password for the next level can be retrieved by submitting the password of the current level to port 30001 on localhost using SSL encryption.
+
+Helpful note: Getting “HEARTBEATING” and “Read R BLOCK”? Use -ign\under{}eof and read the “CONNECTED COMMANDS” section in the manpage. Next to ‘R’ and ‘Q’, the ‘B’ command also works in this version of that command…
+** Level Solution
+Taking a look at the useful commands, I figured openssl -s\under{}client would be useful:
+#+begin_src bash
+  $ openssl -ign_eof  s_client  -connect localhost:30001
+#+end_src
+
+After giving the password of current level, I got the password for the next level:
+PASSWORD: JQttfApK4SeyHwDlI9SXGR50qclOAil1
+NOTE: I was not able to remove the "Read R block" Error.
+* Level 16
+** Level Goal
+The credentials for the next level can be retrieved by submitting the password of the current level to a port on localhost in the range 31000 to 32000. First find out which of these ports have a server listening on them. Then find out which of those speak SSL and which don’t. There is only 1 server that will give the next credentials, the others will simply send back to you whatever you send to it.
+** Level Solution
+We can use nmap to quickly figure out the open ports:
+#+begin_src bash
+  $ nmap localhost -p 31000-32000
+  Starting Nmap 7.80 ( https://nmap.org ) at 2023-10-24 09:34 UTC
+  Nmap scan report for localhost (127.0.0.1)
+  Host is up (0.000099s latency).
+  Not shown: 996 closed ports
+  PORT      STATE SERVICE
+  31046/tcp open  unknown
+  31518/tcp open  unknown
+  31691/tcp open  unknown
+  31790/tcp open  unknown
+  31960/tcp open  unknown
+#+end_src
+
+After that I used s\under{}client to figure out which spoke ssl, and found the correct port:
+#+begin_src bash
+  $ openssl s_client -quiet -connect localhost:31691
+  80DBF0F7FF7F0000:error:0A0000F4:SSL routines:ossl_statem_client_read_transition:unexpected message:../ssl/statem/statem_clnt.c:398:
+  bandit16@bandit:~$ openssl s_client -quiet -connect localhost:31790
+  Can't use SSL_get_servername
+  depth=0 CN = localhost
+  verify error:num=18:self-signed certificate
+  verify return:1
+  depth=0 CN = localhost
+  verify error:num=10:certificate has expired
+  notAfter=Oct 23 04:39:44 2023 GMT
+  verify return:1
+  depth=0 CN = localhost
+  notAfter=Oct 23 04:39:44 2023 GMT
+  verify return:1
+  JQttfApK4SeyHwDlI9SXGR50qclOAil1
+  Correct!
+  -----BEGIN RSA PRIVATE KEY-----
+  MIIEogIBAAKCAQEAvmOkuifmMg6HL2YPIOjon6iWfbp7c3jx34YkYWqUH57SUdyJ
+  imZzeyGC0gtZPGujUSxiJSWI/oTqexh+cAMTSMlOJf7+BrJObArnxd9Y7YT2bRPQ
+  Ja6Lzb558YW3FZl87ORiO+rW4LCDCNd2lUvLE/GL2GWyuKN0K5iCd5TbtJzEkQTu
+  DSt2mcNn4rhAL+JFr56o4T6z8WWAW18BR6yGrMq7Q/kALHYW3OekePQAzL0VUYbW
+  JGTi65CxbCnzc/w4+mqQyvmzpWtMAzJTzAzQxNbkR2MBGySxDLrjg0LWN6sK7wNX
+  x0YVztz/zbIkPjfkU1jHS+9EbVNj+D1XFOJuaQIDAQABAoIBABagpxpM1aoLWfvD
+  KHcj10nqcoBc4oE11aFYQwik7xfW+24pRNuDE6SFthOar69jp5RlLwD1NhPx3iBl
+  J9nOM8OJ0VToum43UOS8YxF8WwhXriYGnc1sskbwpXOUDc9uX4+UESzH22P29ovd
+  d8WErY0gPxun8pbJLmxkAtWNhpMvfe0050vk9TL5wqbu9AlbssgTcCXkMQnPw9nC
+  YNN6DDP2lbcBrvgT9YCNL6C+ZKufD52yOQ9qOkwFTEQpjtF4uNtJom+asvlpmS8A
+  vLY9r60wYSvmZhNqBUrj7lyCtXMIu1kkd4w7F77k+DjHoAXyxcUp1DGL51sOmama
+  +TOWWgECgYEA8JtPxP0GRJ+IQkX262jM3dEIkza8ky5moIwUqYdsx0NxHgRRhORT
+  8c8hAuRBb2G82so8vUHk/fur85OEfc9TncnCY2crpoqsghifKLxrLgtT+qDpfZnx
+  SatLdt8GfQ85yA7hnWWJ2MxF3NaeSDm75Lsm+tBbAiyc9P2jGRNtMSkCgYEAypHd
+  HCctNi/FwjulhttFx/rHYKhLidZDFYeiE/v45bN4yFm8x7R/b0iE7KaszX+Exdvt
+  SghaTdcG0Knyw1bpJVyusavPzpaJMjdJ6tcFhVAbAjm7enCIvGCSx+X3l5SiWg0A
+  R57hJglezIiVjv3aGwHwvlZvtszK6zV6oXFAu0ECgYAbjo46T4hyP5tJi93V5HDi
+  Ttiek7xRVxUl+iU7rWkGAXFpMLFteQEsRr7PJ/lemmEY5eTDAFMLy9FL2m9oQWCg
+  R8VdwSk8r9FGLS+9aKcV5PI/WEKlwgXinB3OhYimtiG2Cg5JCqIZFHxD6MjEGOiu
+  L8ktHMPvodBwNsSBULpG0QKBgBAplTfC1HOnWiMGOU3KPwYWt0O6CdTkmJOmL8Ni
+  blh9elyZ9FsGxsgtRBXRsqXuz7wtsQAgLHxbdLq/ZJQ7YfzOKU4ZxEnabvXnvWkU
+  YOdjHdSOoKvDQNWu6ucyLRAWFuISeXw9a/9p7ftpxm0TSgyvmfLF2MIAEwyzRqaM
+  77pBAoGAMmjmIJdjp+Ez8duyn3ieo36yrttF5NSsJLAbxFpdlc1gvtGCWW+9Cq0b
+  dxviW8+TFVEBl1O4f7HVm6EpTscdDxU+bCXWkfjuRb7Dy9GOtt9JPsX8MBTakzh3
+  vBgsyi/sN3RqRBcGU40fOoZyfAMT8s1m/uYv52O6IgeuZ/ujbjY=
+  -----END RSA PRIVATE KEY-----
+#+end_src
+
+
+* Level 17
+** Level Goal
+There are 2 files in the homedirectory: passwords.old and passwords.new. The password for the next level is in passwords.new and is the only line that has been changed between passwords.old and passwords.new
+
+NOTE: if you have solved this level and see ‘Byebye!’ when trying to log into bandit18, this is related to the next level, bandit19
+** Level Solution
+We can use the diff command to figure out the differences between the 2 files:
+#+begin_src bash
+  bandit17@bandit:~$ diff passwords.new passwords.old
+  42c42
+  < hga5tuuCLF6fFzUpnagiMN8ssu9LFrdg
+  ---
+  > p6ggwdNHncnmCNxuAt0KtKVq185ZU7AW
+#+end_src
+
+The line that's not in passwords.old is hga5tuuCLF6fFzUpnagiMN8ssu9LFrdg, therefore that is the password for our next level.
+* Level 18
+** Level Goal
+The password for the next level is stored in a file readme in the homedirectory. Unfortunately, someone has modified .bashrc to log you out when you log in with SSH.
+** Level Solution
+This level was extremely tricky. The trick here was hiding with ssh. I knew there must be some flag I could probably use that would prevent the loading of .bashrc. But after reading the man page I couldn't find anything interesting, so I referred to stackoverflow: "https://unix.stackexchange.com/questions/20729/ssh-start-a-specific-shell-and-run-a-command-on-the-remote-machine"
+
+I modified the answer to suit my own needs:
+#+begin_src bash
+  $ ssh -p 2220 -l bandit18  bandit.labs.overthewire.org 'exec bash --login'
+#+end_src
+
+this would execute bash with the --login flag, which prevents it to read the user's bashrc file.
+
+PASSWORD: awhqfNnAbc1naukrpqDYcF95h7HoMTrC
+* Level 19
+** Level Goal
+To gain access to the next level, you should use the setuid binary in the homedirectory. Execute it without arguments to find out how to use it. The password for this level can be found in the usual place (/etc/bandit_pass), after you have used the setuid binary.
+** Level Solution
+This level was fairly straight forward:
+#+begin_src bash
+  $  ./bandit20-do
+  Run a command as another user.
+  $ ./bandit20-do cat /etc/bandit_pass/bandit20
+  VxCazJaVykI6W36BkBU0mJTCM8rR95XT
+#+end_src
+
+* Level 20
+** Level Goal
+There is a setuid binary in the homedirectory that does the following: it makes a connection to localhost on the port you specify as a commandline argument. It then reads a line of text from the connection and compares it to the password in the previous level (bandit20). If the password is correct, it will transmit the password for the next level (bandit21).
+
+NOTE: Try connecting to your own network daemon to see if it works as you think
+** Level Solution
+I first used nmap to figure out if a service that gives the password of the previous level already exists. When that failed, I realized I had to make a service of my own using ncat. I had to search the syntax for that online:
+#+begin_src bash
+    $ mkdir /tmp/bin
+  $ echo "VxCazJaVykI6W36BkBU0mJTCM8rR95XT" > passwd
+  $ cd /tmp/bin
+  $ nc -l 1234  < psswd &
+  $ ~/suconnect 1234
+  $ Read: VxCazJaVykI6W36BkBU0mJTCM8rR95XT
+Password matches, sending next password
+NvEJF7oVjkddltPSrdKEFOllh9V1IBcq
+#+end_src
+PASSWORD: NvEJF7oVjkddltPSrdKEFOllh9V1IBcq
+* Level 21
+** Level Goal
+A program is running automatically at regular intervals from cron, the time-based job scheduler. Look in /etc/cron.d/ for the configuration and see what command is being executed.
+** Level Solution
+I started digging around in /etc/cron.d, and found these files of interest:
+#+begin_src bash
+-rw-r--r--   1 root root   62 Oct  5 06:19 cronjob_bandit15_root
+-rw-r--r--   1 root root   62 Oct  5 06:19 cronjob_bandit17_root
+-rw-r--r--   1 root root  120 Oct  5 06:19 cronjob_bandit22
+-rw-r--r--   1 root root  122 Oct  5 06:19 cronjob_bandit23
+-rw-r--r--   1 root root  120 Oct  5 06:19 cronjob_bandit24
+-rw-r--r--   1 root root   62 Oct  5 06:19 cronjob_bandit25_root
+#+end_src
+
+Out of these, cronjo\under{}bandit22, cronjob\under{}bandit23, cronjob\under{}bandit24 were executing some sh files located at /usr/bin/, so i decided to check them out.
+#+begin_src bash
+  $ cat /usr/bin/cronjob_bandit22.sh
+#!/bin/bash
+chmod 644 /tmp/t7O6lds9S0RqQh9aMcz6ShpAoZKF7fgv
+cat /etc/bandit_pass/bandit22 > /tmp/t7O6lds9S0RqQh9aMcz6ShpAoZKF7fgv
+#+end_src
+
+Voila, I've found that the password of the next level is stored in the above file! All I had to do was to view it's contents and move on to the next level!
+#+begin_src bash
+bandit21@bandit:/etc/cron.d$ cat /tmp/t7O6lds9S0RqQh9aMcz6ShpAoZKF7fgv
+WdDozAdTM2z9DiFEQ2mGlwngMfj4EZff
+#+end_src
